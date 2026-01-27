@@ -1,6 +1,6 @@
 package com.github.lamprosvasilakos.workouttracker.repository;
 
-import com.github.lamprosvasilakos.workouttracker.model.User;
+import com.github.lamprosvasilakos.workouttracker.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -9,7 +9,7 @@ import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExis
 import com.github.lamprosvasilakos.workouttracker.exception.AuthenticationFailedException;
 import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
 import com.github.lamprosvasilakos.workouttracker.mapper.UserMapper;
-import com.github.lamprosvasilakos.workouttracker.model.User;
+import com.github.lamprosvasilakos.workouttracker.entity.User;
 import com.github.lamprosvasilakos.workouttracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.github.lamprosvasilakos.workouttracker.model;
+package com.github.lamprosvasilakos.workouttracker.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
