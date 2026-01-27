@@ -6,6 +6,7 @@ import com.github.lamprosvasilakos.workouttracker.dto.request.CreateUserRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.response.AuthenticationResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.CreateUserResponse;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExistsException;
+import com.github.lamprosvasilakos.workouttracker.exception.AuthenticationFailedException;
 import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
 import com.github.lamprosvasilakos.workouttracker.mapper.UserMapper;
 import com.github.lamprosvasilakos.workouttracker.model.User;
@@ -13,10 +14,10 @@ import com.github.lamprosvasilakos.workouttracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 @Service
 @RequiredArgsConstructor
@@ -27,22 +28,26 @@ public class AuthenticationService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
 
-    public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
+    public AuthenticationResponse login(AuthenticationRequest authenticationRequest) throws AuthenticationFailedException {
 
-        Authentication authentication= authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.username(),
-                        authenticationRequest.password()
-                )
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.username(),
+                            authenticationRequest.password()
+                    )
+            );
 
-        User user = (User) authentication.getPrincipal();
-        String token = jwtService.generateToken(authentication.getName());
+            User user = (User) authentication.getPrincipal();
+            String token = jwtService.generateToken(authentication.getName());
 
-        return new AuthenticationResponse(
-                user.getUsername(),
-                token
-        );
+            return new AuthenticationResponse(
+                    user.getUsername(),
+                    token
+            );
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationFailedException("InvalidCredentials", "Wrong username or password");
+        }
     }
 
     @Transactional(rollbackOn = Exception.class)
