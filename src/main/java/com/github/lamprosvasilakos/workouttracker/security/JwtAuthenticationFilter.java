@@ -64,10 +64,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (ExpiredJwtException e) {
             // triggers το AuthenticationEntryPoint 401
-            throw new AuthenticationCredentialsNotFoundException("Expired token", e);
+            throw new AuthenticationCredentialsNotFoundException("Expired JwtToken", e);
         } catch (JwtException | IllegalArgumentException e) {
             // triggers το AuthenticationEntryPoint 401
-            throw new BadCredentialsException("Invalid token");
+            throw new BadCredentialsException("Invalid JwtToken");
         } catch (Exception e) {
             // triggers το AccessDeniedException (403)
             throw new AccessDeniedException("Token validation failed", e);
