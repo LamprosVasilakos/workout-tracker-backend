@@ -6,6 +6,7 @@ import com.github.lamprosvasilakos.workouttracker.dto.request.CreateUserRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.response.AuthenticationResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.CreateUserResponse;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExistsException;
+import com.github.lamprosvasilakos.workouttracker.exception.AuthenticationFailedException;
 import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) throws AuthenticationFailedException {
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
         return new ResponseEntity<>(authenticationResponse, HttpStatus.OK);
     }
