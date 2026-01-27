@@ -2,6 +2,7 @@ package com.github.lamprosvasilakos.workouttracker.controller;
 
 import com.github.lamprosvasilakos.workouttracker.dto.response.ErrorMessageResponse;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExistsException;
+import com.github.lamprosvasilakos.workouttracker.exception.AuthenticationFailedException;
 import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,14 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         log.warn("Entity already exists. Message={}", e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(new ErrorMessageResponse(e.getCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorMessageResponse> handleAuthenticationFailed(AuthenticationFailedException e) {
+        log.warn("Authentication failed. Message={}", e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorMessageResponse(e.getCode(), e.getMessage()));
     }
 }
