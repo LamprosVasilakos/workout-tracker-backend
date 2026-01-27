@@ -25,7 +25,7 @@ public class Exercise {
     private User user;
 
     @Column(nullable = false)
-    private String name;
+    private String exerciseName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "muscle_group", nullable = false)
