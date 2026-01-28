@@ -11,6 +11,7 @@ public record CreateWorkoutExerciseRequest(
         @NotNull(message = "Exercise ID is required")
         UUID exerciseId,
 
+        @NotNull(message = "Exercise order is required")
         Integer exerciseOrder,
 
         @Valid

@@ -1,4 +1,3 @@
-
 package com.github.lamprosvasilakos.workouttracker.authentication;
 
 import com.github.lamprosvasilakos.workouttracker.dto.request.AuthenticationRequest;
@@ -17,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +27,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest) throws AuthenticationFailedException {
 
@@ -59,6 +60,7 @@ public class AuthenticationService {
 
 
         User newUser = userMapper.toUserEntity(createUserRequest);
+        newUser.setPassword(passwordEncoder.encode(createUserRequest.password()));
         userRepository.save(newUser);
         return userMapper.toCreateUserResponse(newUser);
     }

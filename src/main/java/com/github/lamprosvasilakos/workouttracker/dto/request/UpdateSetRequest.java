@@ -11,7 +11,7 @@ public record UpdateSetRequest(
         @Min(value = 0, message = "Weight must be 0 or greater")
         Double weight,
 
-        @Size(max = 250, message = "Notes must not exceed 500 characters")
+        @Size(max = 250, message = "Notes must not exceed 250 characters")
         String notes,
 
         SetType setType

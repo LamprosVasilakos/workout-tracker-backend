@@ -27,7 +27,12 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) throws AuthenticationFailedException {
+    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest authenticationRequest, BindingResult bindingResult) throws AuthenticationFailedException, ValidationException {
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult);
+        }
+
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
         return new ResponseEntity<>(authenticationResponse, HttpStatus.OK);
     }
