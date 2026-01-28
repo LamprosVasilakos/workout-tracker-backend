@@ -42,7 +42,7 @@ public class WorkoutExerciseMapper {
         if (request.sets() != null && !request.sets().isEmpty()) {
             List<Set> sets = request.sets().stream()
                     .map(setMapper::toEntity)
-                    .collect(Collectors.toList());
+                    .toList();
             entity.getSets().clear();
             entity.getSets().addAll(sets);
         }
@@ -53,7 +53,7 @@ public class WorkoutExerciseMapper {
 
         List<SetResponse> setResponses = workoutExercise.getSets().stream()
                 .map(setMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
 
         return new WorkoutExerciseResponse(
                 workoutExercise.getId(),
