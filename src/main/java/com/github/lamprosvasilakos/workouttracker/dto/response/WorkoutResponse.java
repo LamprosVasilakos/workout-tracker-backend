@@ -8,7 +8,6 @@ import java.util.UUID;
 public record WorkoutResponse(
         UUID id,
         LocalDate date,
-        UUID userId,
         List<WorkoutExerciseResponse> workoutExercises
 ) {
 }

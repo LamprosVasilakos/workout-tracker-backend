@@ -7,7 +7,6 @@ import java.util.UUID;
 public record ExerciseResponse(
         UUID id,
         String name,
-        MuscleGroup muscleGroup,
-        UUID userId
+        MuscleGroup muscleGroup
 ) {
 }
