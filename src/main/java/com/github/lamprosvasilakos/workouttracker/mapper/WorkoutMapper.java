@@ -34,11 +34,24 @@ public class WorkoutMapper {
         return workout;
     }
 
+    public void updateEntityFromRequest(UpdateWorkoutRequest request, Workout workout) {
+        if (request.date() != null) {
+            workout.setDate(request.date());
+        }
+
+        if (request.workoutExercises() != null) {
+            List<WorkoutExercise> workoutExercises = request.workoutExercises().stream()
+                    .map(workoutExerciseMapper::toEntity)
+                    .toList();
+            workout.getWorkoutExercises().clear();
+            workout.getWorkoutExercises().addAll(workoutExercises);
+        }
+    }
 
     public WorkoutResponse toResponse(Workout workout) {
         List<WorkoutExerciseResponse> workoutExerciseResponses = workout.getWorkoutExercises().stream()
                 .map(workoutExerciseMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
 
         return new WorkoutResponse(
                 workout.getId(),
