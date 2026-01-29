@@ -1,9 +1,7 @@
 package com.github.lamprosvasilakos.workouttracker.controller;
 
 import com.github.lamprosvasilakos.workouttracker.dto.response.ErrorMessageResponse;
-import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExistsException;
-import com.github.lamprosvasilakos.workouttracker.exception.AuthenticationFailedException;
-import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
+import com.github.lamprosvasilakos.workouttracker.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +45,26 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorMessageResponse(e.getCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(com.github.lamprosvasilakos.workouttracker.exception.AppObjectNotFoundException.class)
+    public ResponseEntity<ErrorMessageResponse> handleNotFound(AppObjectNotFoundException e) {
+        log.info("Resource not found: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorMessageResponse(e.getCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(com.github.lamprosvasilakos.workouttracker.exception.AppServerException.class)
+    public ResponseEntity<ErrorMessageResponse> handleAppServerException(AppServerException e) {
+        log.error("Server error: {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorMessageResponse(e.getCode(), e.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorMessageResponse> handleGlobalException(Exception e) {
+        log.error("Unexpected error occurred", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorMessageResponse("InternalServerError", "An unexpected error occurred"));
     }
 }
