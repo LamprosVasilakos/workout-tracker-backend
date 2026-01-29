@@ -1,0 +1,84 @@
+package com.github.lamprosvasilakos.workouttracker.controller;
+
+import com.github.lamprosvasilakos.workouttracker.dto.request.CreateWorkoutRequest;
+import com.github.lamprosvasilakos.workouttracker.dto.request.UpdateWorkoutRequest;
+import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutResponse;
+import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutSummaryResponse;
+import com.github.lamprosvasilakos.workouttracker.entity.User;
+import com.github.lamprosvasilakos.workouttracker.exception.AppObjectNotFoundException;
+import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
+import com.github.lamprosvasilakos.workouttracker.service.WorkoutService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/workouts")
+@RequiredArgsConstructor
+public class WorkoutController {
+
+    private final WorkoutService workoutService;
+
+    @PostMapping
+    public ResponseEntity<WorkoutResponse> createWorkout(@Valid @RequestBody CreateWorkoutRequest request, BindingResult bindingResult) throws ValidationException, AppObjectNotFoundException {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult);
+        }
+        UUID userId = getAuthenticatedUserId();
+        WorkoutResponse response = workoutService.createWorkout(request, userId);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<WorkoutResponse> getWorkoutById(@PathVariable UUID id) throws AppObjectNotFoundException {
+        UUID userId = getAuthenticatedUserId();
+        WorkoutResponse response = workoutService.getWorkoutById(id, userId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/dates")
+    public ResponseEntity<List<LocalDate>> getWorkoutDates(
+            @RequestParam int year,
+            @RequestParam int month) {
+        
+        UUID userId = getAuthenticatedUserId();
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+        
+        List<LocalDate> response = workoutService.getWorkoutDatesBetween(userId, startDate, endDate);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<WorkoutResponse> updateWorkout(@PathVariable UUID id, @Valid @RequestBody UpdateWorkoutRequest request, BindingResult bindingResult) throws ValidationException, AppObjectNotFoundException {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationException(bindingResult);
+        }
+        UUID userId = getAuthenticatedUserId();
+        WorkoutResponse response = workoutService.updateWorkout(id, request, userId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWorkout(@PathVariable UUID id) throws AppObjectNotFoundException {
+        UUID userId = getAuthenticatedUserId();
+        workoutService.deleteWorkout(id, userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private UUID getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        return user.getId();
+    }
+}
