@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Console Appender -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%highlight([%-5level]) %cyan(%d{HH:mm:ss.SSS}) %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- General Application Logs -->
+    <appender name="AllLogs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/all.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} [%X{user}] [%X{ip}] - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/all.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Error Logs -->
+    <appender name="Errors" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/error.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </level>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n%ex</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Application Logger -->
+    <logger name="com.github.lamprosvasilakos.workouttracker" level="INFO"/>
+
+    <!-- Spring Framework -->
+    <logger name="org.springframework" level="INFO"/>
+    
+    <!-- Hibernate/JPA -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+
+    <!-- HikariCP -->
+    <logger name="com.zaxxer.hikari" level="INFO"/>
+
+    <!-- Tomcat -->
+    <logger name="org.apache.catalina" level="INFO"/>
+    <logger name="org.apache.coyote" level="INFO"/>
+    <logger name="org.apache.tomcat" level="INFO"/>
+
+    <!-- Root Logger -->
+    <root level="INFO">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="AllLogs"/>
+        <appender-ref ref="Errors"/>
+    </root>
+
+</configuration>
