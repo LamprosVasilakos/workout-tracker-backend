@@ -15,7 +15,5 @@ public interface WorkoutService {
     WorkoutResponse updateWorkout(UUID workoutId, UpdateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException;
     void deleteWorkout(UUID workoutId, UUID userId) throws AppObjectNotFoundException;
     WorkoutResponse getWorkoutById(UUID workoutId, UUID userId) throws AppObjectNotFoundException;
-    List<WorkoutSummaryResponse> getWorkoutsByDateRange(UUID userId, LocalDate start, LocalDate end);
-    List<WorkoutResponse> getWorkoutsByDate(UUID userId, LocalDate date);
-    List<LocalDate> getWorkoutDatesBetween(UUID userId, LocalDate start, LocalDate end);
+    List<WorkoutSummaryResponse> getWorkoutsBetweenDates(UUID userId, LocalDate startDate, LocalDate endDate);
 }
