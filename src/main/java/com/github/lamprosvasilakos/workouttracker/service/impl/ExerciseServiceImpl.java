@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -55,18 +56,8 @@ public class ExerciseServiceImpl implements ExerciseService {
         if (request.name() != null || request.muscleGroup() != null) {
             String name = request.name() != null ? request.name() : exercise.getExerciseName();
             MuscleGroup muscleGroup = request.muscleGroup() != null ? request.muscleGroup() : exercise.getMuscleGroup();
-            
-            exerciseRepository.findByUserIdAndMuscleGroupAndExerciseNameIgnoreCase(userId, muscleGroup, name)
-                    .ifPresent(existing -> {
-                        if (!existing.getId().equals(exerciseId)) {
-                            // Note: Since this is inside ifPresent, we can't throw a checked exception directly 
-                            // unless we wrap it or use a different approach.
-                            // However, the original code had this throw. Let's fix the lambda issue.
-                        }
-                    });
-            
-            // Refactoring to avoid checked exception in lambda
-            var existingExercise = exerciseRepository.findByUserIdAndMuscleGroupAndExerciseNameIgnoreCase(userId, muscleGroup, name);
+
+            Optional<Exercise> existingExercise = exerciseRepository.findByUserIdAndMuscleGroupAndExerciseNameIgnoreCase(userId, muscleGroup, name);
             if (existingExercise.isPresent() && !existingExercise.get().getId().equals(exerciseId)) {
                 throw new AppObjectAlreadyExistsException("Exercise", 
                     "Another exercise with name " + name + " already exists for muscle group " + muscleGroup);
