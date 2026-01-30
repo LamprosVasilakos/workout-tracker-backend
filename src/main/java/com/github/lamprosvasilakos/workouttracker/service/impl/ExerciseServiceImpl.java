@@ -93,15 +93,6 @@ public class ExerciseServiceImpl implements ExerciseService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<ExerciseResponse> getAllExercises(UUID userId) {
-        return exerciseRepository.findAll().stream()
-                .filter(e -> e.getUser().getId().equals(userId))
-                .map(exerciseMapper::toResponse)
-                .collect(Collectors.toList());
-    }
-
     private User findUserById(UUID userId) throws AppObjectNotFoundException {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User with ID " + userId + " not found"));

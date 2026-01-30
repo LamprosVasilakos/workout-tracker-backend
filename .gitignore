@@ -36,3 +36,28 @@ build/
 
 ### logs ###
 logs/
+*.log
+*.log.*
+
+### OS ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+### Environment variables ###
+.env
+.env.local
+.env.*.local
+
+### Local configuration files ###
+application-local.properties
+application-local.yml
+application-*.local.*
+
+### Maven ###
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.properties

@@ -16,5 +16,4 @@ public interface ExerciseService {
     void deleteExercise(UUID exerciseId, UUID userId) throws AppObjectNotFoundException;
     ExerciseResponse getExerciseById(UUID exerciseId, UUID userId) throws AppObjectNotFoundException;
     List<ExerciseResponse> getExercisesByMuscleGroup(MuscleGroup muscleGroup, UUID userId);
-    List<ExerciseResponse> getAllExercises(UUID userId);
 }

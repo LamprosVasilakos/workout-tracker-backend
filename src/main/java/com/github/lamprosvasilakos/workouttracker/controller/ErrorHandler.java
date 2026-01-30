@@ -47,17 +47,10 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 .body(new ErrorMessageResponse(e.getCode(), e.getMessage()));
     }
 
-    @ExceptionHandler(com.github.lamprosvasilakos.workouttracker.exception.AppObjectNotFoundException.class)
+    @ExceptionHandler(AppObjectNotFoundException.class)
     public ResponseEntity<ErrorMessageResponse> handleNotFound(AppObjectNotFoundException e) {
         log.info("Resource not found: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorMessageResponse(e.getCode(), e.getMessage()));
-    }
-
-    @ExceptionHandler(com.github.lamprosvasilakos.workouttracker.exception.AppServerException.class)
-    public ResponseEntity<ErrorMessageResponse> handleAppServerException(AppServerException e) {
-        log.error("Server error: {}", e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorMessageResponse(e.getCode(), e.getMessage()));
     }
 
