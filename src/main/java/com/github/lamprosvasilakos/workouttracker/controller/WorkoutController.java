@@ -26,7 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/workouts")
 @RequiredArgsConstructor
-public class WorkoutController {
+public class WorkoutController extends BaseController {
 
     private final WorkoutService workoutService;
 
@@ -42,8 +42,8 @@ public class WorkoutController {
 
     @GetMapping
     public ResponseEntity<List<WorkoutSummaryResponse>> getWorkouts(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         
         UUID userId = getAuthenticatedUserId();
         List<WorkoutSummaryResponse> response = workoutService.getWorkoutsBetweenDates(userId, startDate, endDate);
@@ -72,11 +72,5 @@ public class WorkoutController {
         UUID userId = getAuthenticatedUserId();
         workoutService.deleteWorkout(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    private UUID getAuthenticatedUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return user.getId();
     }
 }

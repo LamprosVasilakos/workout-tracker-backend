@@ -24,7 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/exercises")
 @RequiredArgsConstructor
-public class ExerciseController {
+public class ExerciseController extends BaseController {
 
     private final ExerciseService exerciseService;
 
@@ -46,7 +46,7 @@ public class ExerciseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ExerciseResponse>> getExercisesByMuscleGroup(@RequestParam MuscleGroup muscleGroup) {
+    public ResponseEntity<List<ExerciseResponse>> getExercisesByMuscleGroup(@RequestParam(required = true) MuscleGroup muscleGroup) {
         UUID userId = getAuthenticatedUserId();
         List<ExerciseResponse> response = exerciseService.getExercisesByMuscleGroup(muscleGroup, userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -67,11 +67,5 @@ public class ExerciseController {
         UUID userId = getAuthenticatedUserId();
         exerciseService.deleteExercise(id, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    private UUID getAuthenticatedUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return user.getId();
     }
 }
