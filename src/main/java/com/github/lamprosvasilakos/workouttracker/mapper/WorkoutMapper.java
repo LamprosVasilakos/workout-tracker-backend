@@ -1,7 +1,6 @@
 package com.github.lamprosvasilakos.workouttracker.mapper;
 
 import com.github.lamprosvasilakos.workouttracker.dto.request.CreateWorkoutRequest;
-import com.github.lamprosvasilakos.workouttracker.dto.request.UpdateWorkoutRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutExerciseResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutSummaryResponse;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -27,25 +25,12 @@ public class WorkoutMapper {
         if (request.workoutExercises() != null && !request.workoutExercises().isEmpty()) {
             List<WorkoutExercise> workoutExercises = request.workoutExercises().stream()
                     .map(workoutExerciseMapper::toEntity)
-                    .collect(Collectors.toList());
+                    .peek(we -> we.setWorkout(workout))
+                    .toList();
             workout.setWorkoutExercises(workoutExercises);
         }
 
         return workout;
-    }
-
-    public void updateEntityFromRequest(UpdateWorkoutRequest request, Workout workout) {
-        if (request.date() != null) {
-            workout.setDate(request.date());
-        }
-
-        if (request.workoutExercises() != null) {
-            List<WorkoutExercise> workoutExercises = request.workoutExercises().stream()
-                    .map(workoutExerciseMapper::toEntity)
-                    .toList();
-            workout.getWorkoutExercises().clear();
-            workout.getWorkoutExercises().addAll(workoutExercises);
-        }
     }
 
     public WorkoutResponse toResponse(Workout workout) {

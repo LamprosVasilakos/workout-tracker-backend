@@ -1,7 +1,6 @@
 package com.github.lamprosvasilakos.workouttracker.mapper;
 
 import com.github.lamprosvasilakos.workouttracker.dto.request.CreateWorkoutExerciseRequest;
-import com.github.lamprosvasilakos.workouttracker.dto.request.UpdateWorkoutExerciseRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.response.ExerciseResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.SetResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutExerciseResponse;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -28,24 +26,16 @@ public class WorkoutExerciseMapper {
         if (request.sets() != null && !request.sets().isEmpty()) {
             List<Set> sets = request.sets().stream()
                     .map(setMapper::toEntity)
-                    .collect(Collectors.toList());
-            workoutExercise.setSets(sets);
+                    .toList();
+            
+            for (Set set : sets) {
+                set.setWorkoutExercise(workoutExercise);
+            }
+            
+            workoutExercise.getSets().addAll(sets);
         }
 
         return workoutExercise;
-    }
-
-    public void updateEntityFromRequest(UpdateWorkoutExerciseRequest request, WorkoutExercise entity) {
-        if (request.exerciseOrder() != null) {
-            entity.setExerciseOrder(request.exerciseOrder());
-        }
-        if (request.sets() != null && !request.sets().isEmpty()) {
-            List<Set> sets = request.sets().stream()
-                    .map(setMapper::toEntity)
-                    .toList();
-            entity.getSets().clear();
-            entity.getSets().addAll(sets);
-        }
     }
 
     public WorkoutExerciseResponse toResponse(WorkoutExercise workoutExercise) {
