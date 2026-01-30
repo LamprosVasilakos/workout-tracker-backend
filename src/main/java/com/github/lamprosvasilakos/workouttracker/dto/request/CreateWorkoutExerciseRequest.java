@@ -1,7 +1,6 @@
 package com.github.lamprosvasilakos.workouttracker.dto.request;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
