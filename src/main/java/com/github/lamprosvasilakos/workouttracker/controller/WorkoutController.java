@@ -5,6 +5,7 @@ import com.github.lamprosvasilakos.workouttracker.dto.request.UpdateWorkoutReque
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutSummaryResponse;
 import com.github.lamprosvasilakos.workouttracker.entity.User;
+import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExistsException;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectNotFoundException;
 import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
 import com.github.lamprosvasilakos.workouttracker.service.WorkoutService;
@@ -30,7 +31,7 @@ public class WorkoutController {
     private final WorkoutService workoutService;
 
     @PostMapping
-    public ResponseEntity<WorkoutResponse> createWorkout(@Valid @RequestBody CreateWorkoutRequest request, BindingResult bindingResult) throws ValidationException, AppObjectNotFoundException {
+    public ResponseEntity<WorkoutResponse> createWorkout(@Valid @RequestBody CreateWorkoutRequest request, BindingResult bindingResult) throws ValidationException, AppObjectNotFoundException, AppObjectAlreadyExistsException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
         }
