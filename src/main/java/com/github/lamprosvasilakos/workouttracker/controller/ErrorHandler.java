@@ -23,7 +23,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         log.warn("validation failed. Message={}", e.getMessage());
         BindingResult bindingResult = e.getBindingResult();
 
-        Map<String , String > errors = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
@@ -32,7 +32,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AppObjectAlreadyExistsException.class)
-    public ResponseEntity<ErrorMessageResponse> handleAppObjectAlr(AppObjectAlreadyExistsException e) {
+    public ResponseEntity<ErrorMessageResponse> handleAppObjectAlreadyExists(AppObjectAlreadyExistsException e) {
         log.warn("Entity already exists. Message={}", e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)

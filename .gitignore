@@ -8,6 +8,8 @@ target/
 .vscode/
 .github/
 .cursor/
+.agents/
+
 
 ### STS ###
 .apt_generated
