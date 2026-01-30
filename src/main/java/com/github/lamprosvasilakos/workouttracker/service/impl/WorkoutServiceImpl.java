@@ -1,13 +1,17 @@
 package com.github.lamprosvasilakos.workouttracker.service.impl;
 
+import com.github.lamprosvasilakos.workouttracker.dto.request.CreateWorkoutExerciseRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.request.CreateWorkoutRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.request.UpdateWorkoutRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutSummaryResponse;
 import com.github.lamprosvasilakos.workouttracker.entity.User;
 import com.github.lamprosvasilakos.workouttracker.entity.Workout;
+import com.github.lamprosvasilakos.workouttracker.entity.WorkoutExercise;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectNotFoundException;
+import com.github.lamprosvasilakos.workouttracker.mapper.WorkoutExerciseMapper;
 import com.github.lamprosvasilakos.workouttracker.mapper.WorkoutMapper;
+import com.github.lamprosvasilakos.workouttracker.repository.ExerciseRepository;
 import com.github.lamprosvasilakos.workouttracker.repository.UserRepository;
 import com.github.lamprosvasilakos.workouttracker.repository.WorkoutRepository;
 import com.github.lamprosvasilakos.workouttracker.service.WorkoutService;
@@ -19,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,8 @@ public class WorkoutServiceImpl implements WorkoutService {
     private final WorkoutRepository workoutRepository;
     private final WorkoutMapper workoutMapper;
     private final UserRepository userRepository;
+    private final ExerciseRepository exerciseRepository;
+    private final WorkoutExerciseMapper workoutExerciseMapper;
 
     @Override
     @Transactional
@@ -38,13 +43,8 @@ public class WorkoutServiceImpl implements WorkoutService {
         Workout workout = workoutMapper.toEntity(request);
         workout.setUser(user);
 
-        if (workout.getWorkoutExercises() != null) {
-            workout.getWorkoutExercises().forEach(we -> {
-                we.setWorkout(workout);
-                if (we.getSets() != null) {
-                    we.getSets().forEach(set -> set.setWorkoutExercise(we));
-                }
-            });
+        if (workout.getWorkoutExercises() != null && request.workoutExercises() != null) {
+            loadAndSetExercises(workout.getWorkoutExercises(), request.workoutExercises(), userId);
         }
 
         Workout savedWorkout = workoutRepository.save(workout);
@@ -57,15 +57,26 @@ public class WorkoutServiceImpl implements WorkoutService {
     public WorkoutResponse updateWorkout(UUID workoutId, UpdateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException {
         Workout workout = findWorkoutByIdAndUserId(workoutId, userId);
 
-        workoutMapper.updateEntityFromRequest(request, workout);
+        if (request.date() != null) {
+            workout.setDate(request.date());
+        }
 
-        if (workout.getWorkoutExercises() != null) {
-            workout.getWorkoutExercises().forEach(we -> {
+        if (request.workoutExercises() != null) {
+            workout.getWorkoutExercises().clear();
+            
+            for (int i = 0; i < request.workoutExercises().size(); i++) {
+                var requestWe = request.workoutExercises().get(i);
+                
+                var exercise = exerciseRepository.findByIdAndUserId(requestWe.exerciseId(), userId)
+                        .orElseThrow(() -> new AppObjectNotFoundException("Exercise",
+                            "Exercise with ID " + requestWe.exerciseId() + " not found for user " + userId));
+                
+                var we = workoutExerciseMapper.toEntity(requestWe);
                 we.setWorkout(workout);
-                if (we.getSets() != null) {
-                    we.getSets().forEach(set -> set.setWorkoutExercise(we));
-                }
-            });
+                we.setExercise(exercise);
+                
+                workout.getWorkoutExercises().add(we);
+            }
         }
 
         Workout updatedWorkout = workoutRepository.save(workout);
@@ -90,24 +101,26 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<WorkoutSummaryResponse> getWorkoutsByDateRange(UUID userId, LocalDate start, LocalDate end) {
-        return workoutRepository.findByUserIdAndDateBetweenOrderByDateDesc(userId, start, end).stream()
-                .map(workoutMapper::toSummaryResponse)
-                .collect(Collectors.toList());
+    public List<WorkoutSummaryResponse> getWorkoutsBetweenDates(UUID userId, LocalDate startDate, LocalDate endDate) {
+        List<Workout> workouts = workoutRepository.findByUserIdAndDateBetweenOrderByDateDesc(userId, startDate, endDate);
+        return workouts.stream()
+                .map(workout -> new WorkoutSummaryResponse(workout.getId(), workout.getDate()))
+                .toList();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<WorkoutResponse> getWorkoutsByDate(UUID userId, LocalDate date) {
-        return workoutRepository.findByUserIdAndDate(userId, date).stream()
-                .map(workoutMapper::toResponse)
-                .collect(Collectors.toList());
-    }
+    private void loadAndSetExercises(List<WorkoutExercise> workoutExercises,
+                                     List<CreateWorkoutExerciseRequest> requests,
+                                     UUID userId) throws AppObjectNotFoundException {
+        for (int i = 0; i < workoutExercises.size(); i++) {
+            var we = workoutExercises.get(i);
+            var requestWe = requests.get(i);
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<LocalDate> getWorkoutDatesBetween(UUID userId, LocalDate start, LocalDate end) {
-        return workoutRepository.findDatesByUserIdAndDateBetween(userId, start, end);
+            var exercise = exerciseRepository.findByIdAndUserId(requestWe.exerciseId(), userId)
+                    .orElseThrow(() -> new AppObjectNotFoundException("Exercise",
+                        "Exercise with ID " + requestWe.exerciseId() + " not found for user " + userId));
+
+            we.setExercise(exercise);
+        }
     }
 
     private User findUserById(UUID userId) throws AppObjectNotFoundException {
