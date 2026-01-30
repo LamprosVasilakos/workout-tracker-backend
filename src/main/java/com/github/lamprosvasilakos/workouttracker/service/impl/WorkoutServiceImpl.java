@@ -8,6 +8,7 @@ import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutSummaryRes
 import com.github.lamprosvasilakos.workouttracker.entity.User;
 import com.github.lamprosvasilakos.workouttracker.entity.Workout;
 import com.github.lamprosvasilakos.workouttracker.entity.WorkoutExercise;
+import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExistsException;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectNotFoundException;
 import com.github.lamprosvasilakos.workouttracker.mapper.WorkoutExerciseMapper;
 import com.github.lamprosvasilakos.workouttracker.mapper.WorkoutMapper;
@@ -37,8 +38,14 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     @Transactional
-    public WorkoutResponse createWorkout(CreateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException {
+    public WorkoutResponse createWorkout(CreateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException, AppObjectAlreadyExistsException {
         User user = findUserById(userId);
+
+        // Check if a workout already exists for this date
+        if (workoutRepository.existsByUserIdAndDate(userId, request.date())) {
+            throw new AppObjectAlreadyExistsException("Workout",
+                "A workout already exists for date " + request.date());
+        }
 
         Workout workout = workoutMapper.toEntity(request);
         workout.setUser(user);
