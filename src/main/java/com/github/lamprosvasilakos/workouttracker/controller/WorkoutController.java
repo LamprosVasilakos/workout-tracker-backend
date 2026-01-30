@@ -39,23 +39,20 @@ public class WorkoutController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<WorkoutSummaryResponse>> getWorkouts(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        
+        UUID userId = getAuthenticatedUserId();
+        List<WorkoutSummaryResponse> response = workoutService.getWorkoutsBetweenDates(userId, startDate, endDate);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<WorkoutResponse> getWorkoutById(@PathVariable UUID id) throws AppObjectNotFoundException {
         UUID userId = getAuthenticatedUserId();
         WorkoutResponse response = workoutService.getWorkoutById(id, userId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/dates")
-    public ResponseEntity<List<LocalDate>> getWorkoutDates(
-            @RequestParam int year,
-            @RequestParam int month) {
-        
-        UUID userId = getAuthenticatedUserId();
-        LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
-        
-        List<LocalDate> response = workoutService.getWorkoutDatesBetween(userId, startDate, endDate);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
