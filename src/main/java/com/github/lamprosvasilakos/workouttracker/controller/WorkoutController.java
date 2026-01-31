@@ -4,7 +4,6 @@ import com.github.lamprosvasilakos.workouttracker.dto.request.CreateWorkoutReque
 import com.github.lamprosvasilakos.workouttracker.dto.request.UpdateWorkoutRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutResponse;
 import com.github.lamprosvasilakos.workouttracker.dto.response.WorkoutSummaryResponse;
-import com.github.lamprosvasilakos.workouttracker.entity.User;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExistsException;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectNotFoundException;
 import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
@@ -14,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +39,9 @@ public class WorkoutController extends BaseController {
 
     @GetMapping
     public ResponseEntity<List<WorkoutSummaryResponse>> getWorkouts(
-            @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
         UUID userId = getAuthenticatedUserId();
         List<WorkoutSummaryResponse> response = workoutService.getWorkoutsBetweenDates(userId, startDate, endDate);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -58,7 +55,7 @@ public class WorkoutController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WorkoutResponse> updateWorkout(@PathVariable UUID id, @Valid @RequestBody UpdateWorkoutRequest request, BindingResult bindingResult) throws ValidationException, AppObjectNotFoundException {
+    public ResponseEntity<WorkoutResponse> updateWorkout(@PathVariable UUID id, @Valid @RequestBody UpdateWorkoutRequest request, BindingResult bindingResult) throws ValidationException, AppObjectNotFoundException, AppObjectAlreadyExistsException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult);
         }
