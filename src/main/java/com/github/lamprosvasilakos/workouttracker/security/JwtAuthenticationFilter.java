@@ -63,13 +63,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (ExpiredJwtException e) {
-            // triggers το AuthenticationEntryPoint 401
+            // triggers AuthenticationEntryPoint 401
             throw new AuthenticationCredentialsNotFoundException("Expired JwtToken", e);
         } catch (JwtException | IllegalArgumentException e) {
-            // triggers το AuthenticationEntryPoint 401
+            // triggers AuthenticationEntryPoint 401
             throw new BadCredentialsException("Invalid JwtToken");
         } catch (Exception e) {
-            // triggers το AccessDeniedException (403)
+            // triggers AccessDeniedException (403)
             throw new AccessDeniedException("Token validation failed", e);
         }
         filterChain.doFilter(request, response);
