@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "sets")
-public class Set {
+public class Set extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

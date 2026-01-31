@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "workout_exercises")
-public class WorkoutExercise {
+public class WorkoutExercise extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
