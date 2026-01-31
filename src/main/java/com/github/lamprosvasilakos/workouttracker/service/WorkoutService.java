@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface WorkoutService {
     WorkoutResponse createWorkout(CreateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException, AppObjectAlreadyExistsException;
-    WorkoutResponse updateWorkout(UUID workoutId, UpdateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException;
+    WorkoutResponse updateWorkout(UUID workoutId, UpdateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException, AppObjectAlreadyExistsException;
     void deleteWorkout(UUID workoutId, UUID userId) throws AppObjectNotFoundException;
     WorkoutResponse getWorkoutById(UUID workoutId, UUID userId) throws AppObjectNotFoundException;
     List<WorkoutSummaryResponse> getWorkoutsBetweenDates(UUID userId, LocalDate startDate, LocalDate endDate);
