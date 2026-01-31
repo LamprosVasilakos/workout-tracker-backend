@@ -61,10 +61,15 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     @Transactional
-    public WorkoutResponse updateWorkout(UUID workoutId, UpdateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException {
+    public WorkoutResponse updateWorkout(UUID workoutId, UpdateWorkoutRequest request, UUID userId) throws AppObjectNotFoundException, AppObjectAlreadyExistsException {
         Workout workout = findWorkoutByIdAndUserId(workoutId, userId);
 
-        if (request.date() != null) {
+        if (request.date() != null && !request.date().equals(workout.getDate())) {
+            // Check if a workout already exists for the new date
+            if (workoutRepository.existsByUserIdAndDate(userId, request.date())) {
+                throw new AppObjectAlreadyExistsException("Workout",
+                        "A workout already exists for date " + request.date());
+            }
             workout.setDate(request.date());
         }
 
@@ -111,7 +116,7 @@ public class WorkoutServiceImpl implements WorkoutService {
     public List<WorkoutSummaryResponse> getWorkoutsBetweenDates(UUID userId, LocalDate startDate, LocalDate endDate) {
         List<Workout> workouts = workoutRepository.findByUserIdAndDateBetweenOrderByDateDesc(userId, startDate, endDate);
         return workouts.stream()
-                .map(workout -> new WorkoutSummaryResponse(workout.getId(), workout.getDate()))
+                .map(workoutMapper::toSummaryResponse)
                 .toList();
     }
 
