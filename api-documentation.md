@@ -43,7 +43,7 @@ Authorization: Bearer <token>
   - `409 Conflict`: Username already exists
     ```json
     {
-      "code": "Username",
+      "code": "UsernameAlreadyExists",
       "description": "User with username <username> already exists"
     }
     ```
@@ -100,7 +100,7 @@ Authorization: Bearer <token>
   - `409 Conflict`: Exercise with same name already exists for this muscle group
     ```json
     {
-      "code": "Exercise",
+      "code": "ExerciseAlreadyExists",
       "description": "Exercise with name <name> already exists for muscle group <muscleGroup>"
     }
     ```
@@ -122,7 +122,7 @@ Authorization: Bearer <token>
   - `404 Not Found`: Exercise not found or doesn't belong to user
     ```json
     {
-      "code": "Exercise",
+      "code": "ExerciseNotFound",
       "description": "Exercise with ID <id> not found for user <userId>"
     }
     ```
@@ -232,7 +232,7 @@ Authorization: Bearer <token>
   - `409 Conflict`: Workout already exists for this date
     ```json
     {
-      "code": "Workout",
+      "code": "WorkoutAlreadyExists",
       "description": "A workout already exists for date <date>"
     }
     ```
@@ -290,7 +290,7 @@ Authorization: Bearer <token>
   - `404 Not Found`: Workout not found or doesn't belong to user
     ```json
     {
-      "code": "Workout",
+      "code": "WorkoutNotFound",
       "description": "Workout with ID <id> not found for user <userId>"
     }
     ```
