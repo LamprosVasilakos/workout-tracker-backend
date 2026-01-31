@@ -4,7 +4,6 @@ import com.github.lamprosvasilakos.workouttracker.dto.request.CreateExerciseRequ
 import com.github.lamprosvasilakos.workouttracker.dto.request.UpdateExerciseRequest;
 import com.github.lamprosvasilakos.workouttracker.dto.response.ExerciseResponse;
 import com.github.lamprosvasilakos.workouttracker.entity.MuscleGroup;
-import com.github.lamprosvasilakos.workouttracker.entity.User;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectAlreadyExistsException;
 import com.github.lamprosvasilakos.workouttracker.exception.AppObjectNotFoundException;
 import com.github.lamprosvasilakos.workouttracker.exception.ValidationException;
@@ -13,8 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +43,7 @@ public class ExerciseController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ExerciseResponse>> getExercisesByMuscleGroup(@RequestParam(required = true) MuscleGroup muscleGroup) {
+    public ResponseEntity<List<ExerciseResponse>> getExercisesByMuscleGroup(@RequestParam MuscleGroup muscleGroup) {
         UUID userId = getAuthenticatedUserId();
         List<ExerciseResponse> response = exerciseService.getExercisesByMuscleGroup(muscleGroup, userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
