@@ -60,7 +60,7 @@ public class ExerciseServiceImpl implements ExerciseService {
             Optional<Exercise> existingExercise = exerciseRepository.findByUserIdAndMuscleGroupAndExerciseNameIgnoreCase(userId, muscleGroup, name);
             if (existingExercise.isPresent() && !existingExercise.get().getId().equals(exerciseId)) {
                 throw new AppObjectAlreadyExistsException("Exercise", 
-                    "Another exercise with name " + name + " already exists for muscle group " + muscleGroup);
+                    "Another exercise with name " + name + " already exists for the "+ muscleGroup+ " muscle group ");
             }
         }
 
