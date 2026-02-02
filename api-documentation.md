@@ -313,7 +313,7 @@ Authorization: Bearer <token>
 - **Request**: Path parameter `id` (UUID), body:
   ```json
   {
-    "date": "2024-01-29", // optional
+    "date": "2024-01-29", 
     "workoutExercises": [ // optional, but if provided replaces all existing exercises
       {
         "exerciseId": "uuid (required)",
@@ -344,7 +344,7 @@ Authorization: Bearer <token>
 - **Response** (error):
   - `404 Not Found`: Workout not found or doesn't belong to user
 
-## Data Models / DTOs
+## Data Models / DTOs (Client)
 
 ### ExerciseResponse
 ```typescript
