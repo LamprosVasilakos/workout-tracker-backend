@@ -15,8 +15,14 @@ Authorization: Bearer <token>
 - Token expiration: 24 hours (86400000 ms) by default, configurable via `JWT_EXPIRATION_MS`
 - Public endpoints: `/auth/login`, `/auth/register`
 - All other endpoints require authentication
-- Invalid/expired tokens return `401 Unauthorized`
-- Missing tokens on protected endpoints return `401 Unauthorized`
+- Invalid/expired tokens return `401 Unauthorized`:
+  ```json
+  {
+    "code": "UserNotAuthenticated",
+    "description": "User needs to authenticate in order to access this route"
+  }
+  ```
+- Missing tokens on protected endpoints return `401 Unauthorized` with the same error response
 
 ## Endpoints
 
@@ -101,7 +107,7 @@ Authorization: Bearer <token>
     ```json
     {
       "code": "ExerciseAlreadyExists",
-      "description": "Exercise with name <name> already exists for muscle group <muscleGroup>"
+      "description": "Exercise with name <name> already exists for the <muscleGroup> muscle group"
     }
     ```
 - **Notes**: Exercise names are case-insensitive. Uniqueness is per user per muscle group.
@@ -165,6 +171,12 @@ Authorization: Bearer <token>
   - `400 Bad Request`: Validation errors
   - `404 Not Found`: Exercise not found or doesn't belong to user
   - `409 Conflict`: Another exercise with the updated name already exists for the muscle group
+    ```json
+    {
+      "code": "ExerciseAlreadyExists",
+      "description": "Another exercise with name <name> already exists for the <muscleGroup> muscle group "
+    }
+    ```
 - **Notes**: Partial updates supported. Omitted fields remain unchanged. Uniqueness check applies to the updated values.
 
 ### DELETE /exercises/{id}
