@@ -101,7 +101,7 @@ Authorization: Bearer <token>
     ```json
     {
       "code": "ExerciseAlreadyExists",
-      "description": "Exercise with name <name> already exists for the <muscleGroup> muscle group "
+      "description": "Exercise with name <name> already exists for muscle group <muscleGroup>"
     }
     ```
 - **Notes**: Exercise names are case-insensitive. Uniqueness is per user per muscle group.
@@ -461,7 +461,7 @@ interface ErrorMessageResponse {
 - **Exercise Deletion**: Deleting an exercise may affect existing workouts. Check cascade behavior—workouts may retain references or be updated accordingly.
 - **Date Range Queries**: The `getWorkouts` endpoint requires both `startDate` and `endDate`. Results are inclusive of both dates and sorted by date descending.
 - **Token Expiration**: JWT tokens expire after 24 hours by default. Frontend should handle token refresh or re-authentication.
-- **CORS**: API allows requests from `http://localhost:3000` with credentials. Update CORS configuration for production.
+- **CORS**: API allows requests from `http://localhost:3000`, `http://localhost:5173`, and `http://localhost:5174` with credentials. Update CORS configuration for production.
 
 ## Integration Notes
 
