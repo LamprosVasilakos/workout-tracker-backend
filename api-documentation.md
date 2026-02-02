@@ -484,20 +484,6 @@ interface ErrorMessageResponse {
   4. List workouts by date range → Display summaries
   5. Fetch workout details → Show full workout
 
-- **Optimistic UI**: 
-  - Safe for: Exercise list updates, workout list updates
-  - Not safe for: Creating workouts (date uniqueness check), creating exercises (name uniqueness check)
-  - Always validate on the backend before showing success
-
-- **Caching**: 
-  - No explicit cache headers provided
-  - Consider caching exercise lists by muscle group (they change infrequently)
-  - Workout lists may change frequently—cache with short TTL or invalidate on create/update/delete
-
-- **Real-time**: 
-  - No websocket support
-  - Use polling for workout lists if real-time updates are needed
-
 - **Error Handling**:
   - Validation errors (`400`) return field-level messages: `{ "fieldName": "error message" }`
   - Business logic errors (`404`, `409`, `401`) return `ErrorMessageResponse` with `code` and `description`
