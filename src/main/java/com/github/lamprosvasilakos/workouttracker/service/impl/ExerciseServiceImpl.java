@@ -38,7 +38,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
         if (exerciseRepository.existsByUserIdAndMuscleGroupAndExerciseNameIgnoreCase(userId, request.muscleGroup(), request.name())) {
             throw new AppObjectAlreadyExistsException("Exercise",
-                "Exercise with name " + request.name() + " already exists for the "  + request.muscleGroup() +" muscle group");
+                "Exercise " + request.name() + " already exists for the "  + request.muscleGroup().toString().toLowerCase() +" muscle group");
         }
 
         Exercise exercise = exerciseMapper.toEntity(request);
