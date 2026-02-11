@@ -107,7 +107,7 @@ Authorization: Bearer <token>
     ```json
     {
       "code": "ExerciseAlreadyExists",
-      "description": "Exercise with name <name> already exists for the <muscleGroup> muscle group"
+      "description": "Exercise <name> already exists for the <muscleGroup> muscle group"
     }
     ```
 - **Notes**: Exercise names are case-insensitive. Uniqueness is per user per muscle group.
